@@ -30,16 +30,18 @@ def generate_launch_description():
         output='screen')
 
 
-    # 因为 urdf文件中有一句 $(find mybot) 需要用xacro进行编译一下才行
+    # Because there is a line $(find mybot) in the urdf file, it needs to be compiled with xacro
     xacro_file = urdf_model_path
     doc = xacro.parse(open(xacro_file))
     xacro.process_doc(doc)
     # params = {'robot_description': doc.toxml()}
     params = {'robot_description': remove_comments(doc.toxml())}
 
-    # 启动了robot_state_publisher节点后，该节点会发布 robot_description 话题，话题内容是模型文件urdf的内容
-    # 并且会订阅 /joint_states 话题，获取关节的数据，然后发布tf和tf_static话题.
-    # 这些节点、话题的名称可不可以自定义？
+    # After starting the robot_state_publisher node, this node will publish the robot_description topic, 
+    # the content of the topic is the content of the urdf model file, 
+    # and it will subscribe to the /joint_states topic to get the joint data, 
+    # and then publish the tf and tf_static topics.
+    # Can the names of these nodes and topics be customized?
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -47,14 +49,15 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Launch the robot, 通过robot_description话题进行模型内容获取从而在gazebo中生成模型
+    # Launch the robot, generate the model in gazebo through the robot_description topic
     spawn_entity_cmd = Node(
         package='gazebo_ros', 
         executable='spawn_entity.py',
         arguments=['-entity', robot_name_in_model,  '-topic', 'robot_description'], output='screen')
 
 
-    # # Launch the robot, 这个是通过传递文件路径来在gazebo里生成模型.此时要求urdf文件里面没有xacro的语句
+    # # Launch the robot, this is to generate the model in gazebo by passing the file path. 
+    # At this time, it is required that there is no xacro statement in the urdf file
     # spawn_entity_cmd = Node(
     #     package='gazebo_ros', 
     #     executable='spawn_entity.py',
@@ -68,32 +71,32 @@ def generate_launch_description():
     #     output='screen'
     # )
 
-    # gazebo在加载urdf时，根据urdf的设定，会启动一个joint_states节点?
-    # 关节状态发布器
+    # When loading the urdf in gazebo, according to the settings of the urdf, will a joint_states node be started?
+    # Joint state publisher
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_state_broadcaster'],
         output='screen'
     )
 
-    # 路径执行控制器，也就是那个action？
-    # 系统是如何知道有my_group_controller这个控制器的存在？
+    # Path execution controller, is that the action?
+    # How does the system know that there is a my_group_controller controller?
     load_joint_trajectory_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'my_group_controller'],
         output='screen'
     )
 
-    # 用下面这两个估计是想控制好各个节点的启动顺序
-    # 监听 spawn_entity_cmd，当其退出（完全启动）时，启动load_joint_state_controller？
+    # Use the following two to control the startup sequence of each node
+    # Listen to spawn_entity_cmd, when it exits (fully started), start load_joint_state_controller?
     close_evt1 =  RegisterEventHandler( 
             event_handler=OnProcessExit(
                 target_action=spawn_entity_cmd,
                 on_exit=[load_joint_state_controller],
             )
     )
-    # 监听 load_joint_state_controller，当其退出（完全启动）时，启动load_joint_trajectory_controller？
-    # moveit是怎么和gazebo这里提供的action连接起来的？？
+    # Listen to load_joint_state_controller, when it exits (fully started), start load_joint_trajectory_controller?
+    # How does moveit connect with the action provided by gazebo here?
     close_evt2 = RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,

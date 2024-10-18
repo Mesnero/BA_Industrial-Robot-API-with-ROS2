@@ -1,0 +1,4 @@
+# ROS2 build directories
+/build/
+/install/
+/log/

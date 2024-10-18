@@ -24,9 +24,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "robcomm/robcomm.hpp"
 
-
-
-
 namespace robco_hw
 {
 hardware_interface::CallbackReturn RobcoHardwareInterface::on_init(
@@ -49,7 +46,7 @@ hardware_interface::CallbackReturn RobcoHardwareInterface::on_init(
   // joint_vel_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   // joint_acc_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
 
- // 设置默认参数值
+  // Set default parameter values
   robot_ip_ = "192.168.3.1";
   local_rx_port_ = 25001;
   remote_tx_port_ = 25000;
@@ -136,7 +133,7 @@ hardware_interface::CallbackReturn RobcoHardwareInterface::on_activate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   // TODO(anyone): prepare the robot to receive commands
-  // 设置机器人为操作状态
+  // Set the robot to operational state
   robot_.set_state(robcomm::ROBOT_STATE_CMD_OPERATIONAL);
   
   if (!robot_.is_initialized())
@@ -145,13 +142,13 @@ hardware_interface::CallbackReturn RobcoHardwareInterface::on_activate(
     return CallbackReturn::ERROR;
   }
 
-  // 设置关节初始状态
+  // Set initial joint states
   // auto joint_angles = robot_.getJointAngles();
   for (size_t i = 0; i < info_.joints.size(); ++i)
   {
     joint_pos_states_[i] = 0.0;
     joint_pos_commands_[i] = 0.0;
-    joint_vel_commands_[i] = 0.0; // 初始化速度命令为0
+    joint_vel_commands_[i] = 0.0; // Initialize velocity command to 0
   }
 
   return CallbackReturn::SUCCESS;
@@ -170,7 +167,7 @@ hardware_interface::return_type RobcoHardwareInterface::read(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   // TODO(anyone): read robot states
-  // 读取机器人状态
+  // Read robot states
   // robot_.receive();
   // auto joint_angles = robot_.getJointAngles();
   for (size_t i = 0; i < info_.joints.size(); ++i)
@@ -185,7 +182,7 @@ hardware_interface::return_type RobcoHardwareInterface::read(
 hardware_interface::return_type RobcoHardwareInterface::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // TODO(anyone): write robot's commands'
+  // TODO(anyone): write robot's commands
 
   robot_.jog_joints(joint_vel_commands_);
   return hardware_interface::return_type::OK;

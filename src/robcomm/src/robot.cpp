@@ -69,7 +69,7 @@ namespace robcomm
 
             printf("Received a message of size %d\n", n);
 
-            // 打印接收的缓冲区内容（以十六进制显示）
+            // Print the received buffer content (in hexadecimal)
             for (int i = 0; i < n; ++i) {
             printf("%02x ", (unsigned char)recv_buffer[i]);
             }
@@ -215,7 +215,7 @@ namespace robcomm
             MSG_GET_DETECTED_MODULES_MODULE* module =
                 (MSG_GET_DETECTED_MODULES_MODULE*)(&msg->data[i * sizeof(MSG_GET_DETECTED_MODULES_MODULE)]);
 
-	    uint32_t module_id = ntohl(module->id);
+        uint32_t module_id = ntohl(module->id);
 
             // Ignore clamps
             if (module_id >= 8000 && module_id <= 8999)

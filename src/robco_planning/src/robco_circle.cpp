@@ -12,10 +12,10 @@ geometry_msgs::msg::Pose computeCirclePoint(double radius, double angle) {
     geometry_msgs::msg::Pose pose;
     pose.position.x = radius * cos(angle);
     pose.position.y = radius * sin(angle);
-    pose.position.z = 0.8; // 设定一个固定的Z轴高度
+    pose.position.z = 0.8; // Set a fixed Z-axis height
 
     tf2::Quaternion q;
-    q.setRPY(0, 0, 0);  // 保持固定的朝向
+    q.setRPY(0, 0, 0);  // Maintain a fixed orientation
     pose.orientation = tf2::toMsg(q);
 
     return pose;
@@ -47,29 +47,29 @@ int main(int argc, char* argv[]) {
     moveit_visual_tools.loadRemoteControl();
 
     // Set up circular trajectory parameters
-    double radius = 0.1; // 圆的半径
-    double angle_increment = 0.001; // 角度增量，调整为合适的值以实现平滑运动
+    double radius = 0.1; // Radius of the circle
+    double angle_increment = 0.001; // Angle increment, adjust to achieve smooth motion
 
-    // 用于存储路径点的容器
+    // Container for storing waypoints
     std::vector<geometry_msgs::msg::Pose> waypoints;
     for (double angle = 0.0; angle <= 2 * M_PI; angle += angle_increment) {
         waypoints.push_back(computeCirclePoint(radius, angle));
     }
 
     while (rclcpp::ok()) {
-        // 确保起始位置正确
+        // Ensure the starting position is correct
         move_group_interface->setStartStateToCurrentState();
 
-        // 计算笛卡尔路径
+        // Compute Cartesian path
         moveit_msgs::msg::RobotTrajectory trajectory;
         const double jump_threshold = 0.0;
-        const double eef_step = 0.1;  // 控制终端的步长
+        const double eef_step = 0.1;  // Control the end-effector step size
         double fraction = move_group_interface->computeCartesianPath(waypoints, eef_step, jump_threshold, trajectory);
 
         if (fraction < 0.99) {
             RCLCPP_WARN(logger, "Could only compute %f of the path.", fraction);
         } else {
-            // 执行规划的路径
+            // Execute the planned path
             moveit::planning_interface::MoveGroupInterface::Plan plan;
             plan.trajectory_ = trajectory;
             if (move_group_interface->execute(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS) {

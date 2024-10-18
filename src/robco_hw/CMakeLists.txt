@@ -17,7 +17,7 @@ find_package(robco_moveit_config REQUIRED)
 # Include directories
 include_directories(
   include
-  ${robcomm_INCLUDE_DIRS}  # 确保包含robcomm的头文件路径
+  ${robcomm_INCLUDE_DIRS}  # Ensure to include the header file path of robcomm
 )
 
 # Add library
@@ -33,7 +33,7 @@ target_link_libraries(
   ${hardware_interface_LIBRARIES}
   ${rclcpp_LIBRARIES}
   ${rclcpp_lifecycle_LIBRARIES}
-  ${robcomm_LIBRARIES}  # 链接robcomm库
+  ${robcomm_LIBRARIES}  # Link robcomm library
   ${robco_moveit_config_LIBRARIES}
 )
 

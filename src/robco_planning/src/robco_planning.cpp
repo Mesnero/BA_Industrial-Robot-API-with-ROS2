@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   // Create a ROS logger
   auto const logger = rclcpp::get_logger("robco_planning");
 
-  //spin up a SingleThreadedExecutor so MoveItVisualTools interact with ROS
+  // Spin up a SingleThreadedExecutor so MoveItVisualTools interact with ROS
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
   auto spinner = std::thread([&executor]() { executor.spin(); });
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   moveit_visual_tools.deleteAllMarkers();
   moveit_visual_tools.loadRemoteControl();
 
-  // Create a closures for visualization
+  // Create closures for visualization
   auto const draw_title = [&moveit_visual_tools](auto text) {
     auto const text_pose = [] {
       auto msg = Eigen::Isometry3d::Identity();
@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
   auto const target_pose = [] {
       geometry_msgs::msg::Pose msg;
       tf2::Quaternion q;
-      q.setRPY(M_PI, 0, 0);  // 旋转180度绕x轴，使末端朝下
-      // 转换tf2四元数到geometry_msgs四元数
+      q.setRPY(M_PI, 0, 0);  // Rotate 180 degrees around the x-axis, making the end face down
+      // Convert tf2 quaternion to geometry_msgs quaternion
       msg.orientation = tf2::toMsg(q);
       msg.position.x = -0.3;
       msg.position.y = 0.35;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
   } else {
     draw_title("Planning Failed!");
     moveit_visual_tools.trigger();
-    RCLCPP_ERROR(logger, "Planing failed!");
+    RCLCPP_ERROR(logger, "Planning failed!");
   }
 
   rclcpp::shutdown();
