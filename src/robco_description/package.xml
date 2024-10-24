@@ -3,8 +3,12 @@
 <package format="3">
   <name>robco_description</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="yo@todo.todo">yo</maintainer>
+  <description>
+    The `robco_description` package contains the STL and Xacro files that define the physical structure, visual appearance, and collision properties of the RobCo robot. 
+    The package also includes a Gazebo launch file (`gazebo_launch.py`) to facilitate easy setup of the robot in a simulated environment, making it ready for testing and development in Gazebo.
+    This package serves as the foundational robot model for simulation and motion planning but does not handle hardware control directly.
+  </description>
+    <maintainer email="yo@todo.todo">yo</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -13,9 +17,6 @@
   <test_depend>ament_lint_common</test_depend>
   
   <exec_depend>gazebo_ros</exec_depend>
-  <exec_depend>ros2_control</exec_depend>
-  <exec_depend>ros2_controllers</exec_depend>
-
 
   <export>
     <build_type>ament_cmake</build_type>
